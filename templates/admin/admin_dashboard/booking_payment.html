@@ -1,0 +1,582 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block content %}
+<div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Booking & Payment Management</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-2">View and manage all customer bookings and payments</p>
+    </div>
+    <div class="flex items-center space-x-3">
+        <div class="relative">
+            <input type="text" placeholder="Search bookings..."
+                class="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+        </div>
+        <select
+            class="border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <option>Filter by Status</option>
+            <option>Active</option>
+            <option>Completed</option>
+            <option>Cancelled</option>
+        </select>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-blue-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 uppercase">Total Bookings</h2>
+                <p class="text-3xl font-bold text-gray-800 dark:text-white mt-2">{{ total_bookings }}</p>
+            </div>
+            <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-green-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 uppercase">Completed</h2>
+                <p class="text-3xl font-bold text-gray-800 dark:text-white mt-2">{{ completed_bookings }}</p>
+            </div>
+            <div class="p-3 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-yellow-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 uppercase">Active</h2>
+                <p class="text-3xl font-bold text-gray-800 dark:text-white mt-2">{{ active_bookings }}</p>
+            </div>
+            <div class="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-red-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 uppercase">Cancelled</h2>
+                <p class="text-3xl font-bold text-gray-800 dark:text-white mt-2">{{ cancelled_bookings }}</p>
+            </div>
+            <div class="p-3 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bookings Table -->
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-6">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Booking ID</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Customer</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Vehicle</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Dates</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Payment Status</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Amount</th>
+                    <th
+                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                {% for booking in bookings %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900 dark:text-white">{{ booking.unique_id }}</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ booking.created_at|date:"M d, Y" }}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 rounded-full overflow-hidden">
+                                {% if booking.user.profile_picture %}
+                                <img src="{{ booking.user.profile_picture.url }}" alt="Profile"
+                                    class="h-10 w-16 object-cover rounded-full">
+                                {% else %}
+                                <div
+                                    class="h-10 w-10 bg-gray-200 dark:bg-gray-600 flex items-center justify-center rounded-full">
+                                    <span class="text-gray-600 dark:text-gray-300">
+                                        {{ booking.user.first_name|first|upper }}{{ booking.user.last_name|first|upper
+                                        }}
+                                    </span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="ml-4">
+
+                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ booking.user.email }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <img class="h-10 w-10 rounded-lg object-cover" src="{{ booking.car.car_img.url }}"
+                                    alt="{{ booking.car.make }}">
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ booking.car.make }} {{booking.car.model }}</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ booking.car.year }} • {{booking.car.color }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900 dark:text-white">
+                            {{ booking.picking_date|date:"M d" }} - {{ booking.return_date|date:"M d" }}
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ booking.total_days }} days</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if booking.is_paid %}
+                        <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                            Paid
+                        </span>
+                        {% else %}
+                        <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">
+                            Pending
+                        </span>
+                        {% endif %}
+                    </td>
+                    {% with booking.paymentdetails_set.first as payment %}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                        {% if payment %}
+                        ₹{{ payment.amount_paid }}
+                        {% else %}
+                        ₹0
+                        {% endif %}
+                    </td>
+                    {% endwith %}
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="openBookingModal('{{ booking.id }}')"
+                            class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-500 mr-3">
+                            View
+                        </button>
+                        {% if booking.return_date >= today %}
+                        <button onclick="confirmCancelBooking('{{ booking.id }}')"
+                            class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-500">
+                            Cancel
+                        </button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">No bookings found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- Pagination -->
+    <div
+        class="px-6 py-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700 dark:text-gray-300">
+                    Showing <span class="font-medium">{{ bookings.start_index }}</span> to <span class="font-medium">{{
+                        bookings.end_index }}</span> of <span class="font-medium">{{ bookings.paginator.count }}</span>
+                    results
+                </p>
+            </div>
+            <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    {% if bookings.has_previous %}
+                    <a href="?page={{ bookings.previous_page_number }}"
+                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <span class="sr-only">Previous</span>
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            aria-hidden="true">
+                            <path fill-rule="evenodd"
+                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    {% endif %}
+
+                    {% for num in bookings.paginator.page_range %}
+                    {% if bookings.number == num %}
+                    <a href="?page={{ num }}" aria-current="page"
+                        class="z-10 bg-blue-50 dark:bg-blue-900 border-blue-500 dark:border-blue-700 text-blue-600 dark:text-blue-300 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                        {{ num }}
+                    </a>
+                    {% else %}
+                    <a href="?page={{ num }}"
+                        class="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if bookings.has_next %}
+                    <a href="?page={{ bookings.next_page_number }}"
+                        class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <span class="sr-only">Next</span>
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            aria-hidden="true">
+                            <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Booking Details Modal -->
+<div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white">Booking & Payment Details</h3>
+                <button onclick="closeModal()"
+                    class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Booking Information -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <h4 class="text-lg font-medium text-gray-800 dark:text-white mb-3">Booking Information</h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Booking ID:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalBookingId">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Booking Date:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalBookingDate">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Pickup Date:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalPickupDate">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Return Date:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalReturnDate">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Total Days:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalTotalDays">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Status:</span>
+                            <span class="font-medium" id="modalStatus">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Information -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <h4 class="text-lg font-medium text-gray-800 dark:text-white mb-3">Customer Information</h4>
+                    <div class="flex items-center mb-3">
+                        <div
+                            class="flex-shrink-0 h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center mr-3">
+                            <span class="text-gray-600 dark:text-gray-300 text-lg" id="modalCustomerInitials">-</span>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-800 dark:text-white" id="modalCustomerName">-</h5>
+                            <p class="text-sm text-gray-500 dark:text-gray-400" id="modalCustomerEmail">-</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Phone:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalCustomerPhone">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Member Since:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalCustomerSince">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Information -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <h4 class="text-lg font-medium text-gray-800 dark:text-white mb-3">Vehicle Information</h4>
+                    <div class="flex items-center mb-3">
+                        <div class="flex-shrink-0 h-16 w-16 mr-3">
+                            <img class="h-16 w-16 rounded-lg object-cover" id="modalCarImage" src="" alt="Car image">
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-800 dark:text-white" id="modalCarMakeModel">-</h5>
+                            <p class="text-sm text-gray-500 dark:text-gray-400" id="modalCarDetails">-</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Transmission:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalCarTransmission">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Fuel Type:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalCarFuel">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Daily Rate:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalCarPrice">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Information -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <h4 class="text-lg font-medium text-gray-800 dark:text-white mb-3">Payment Information</h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Payment Status:</span>
+                            <span class="font-medium" id="modalPaymentStatus">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Payment ID:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalPaymentId">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Payment Date:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalPaymentDate">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Amount Paid:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalAmountPaid">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Payment Method:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalPaymentMethod">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Razorpay Order ID:</span>
+                            <span class="font-medium text-gray-800 dark:text-white" id="modalRazorpayOrderId">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="closeModal()"
+                    class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Close
+                </button>
+                <button type="button"
+                    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Print Invoice
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Booking Confirmation Modal -->
+<div id="cancelBookingModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white">Confirm Cancellation</h3>
+                <button onclick="closeCancelModal()"
+                    class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to cancel this booking? This action
+                cannot be undone.</p>
+
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="closeCancelModal()"
+                    class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    No, Keep It
+                </button>
+                <button type="button" id="confirmCancelBtn"
+                    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    Yes, Cancel Booking
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Today's date for comparison
+    const today = new Date('{{ today|date:"Y-m-d" }}');
+
+    function openBookingModal(bookingId) {
+        fetch(`/admin/get-booking-details/${bookingId}/`)
+            .then(response => response.json())
+            .then(data => {
+                // Populate modal with data
+                document.getElementById('modalBookingId').textContent = data.unique_id;
+                document.getElementById('modalBookingDate').textContent = new Date(data.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                document.getElementById('modalPickupDate').textContent = new Date(data.picking_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                document.getElementById('modalReturnDate').textContent = new Date(data.return_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                document.getElementById('modalTotalDays').textContent = data.total_days;
+
+                // Determine booking status
+                const pickupDate = new Date(data.picking_date);
+                const returnDate = new Date(data.return_date);
+                let status = 'Upcoming';
+                let statusColor = 'text-blue-600 dark:text-blue-400';
+
+                if (today >= pickupDate && today <= returnDate) {
+                    status = 'Active';
+                    statusColor = 'text-green-600 dark:text-green-400';
+                } else if (today > returnDate) {
+                    status = 'Completed';
+                    statusColor = 'text-gray-600 dark:text-gray-300';
+                }
+
+                const statusElement = document.getElementById('modalStatus');
+                statusElement.textContent = status;
+                statusElement.className = `font-medium ${statusColor}`;
+
+                // Customer info
+                document.getElementById('modalCustomerInitials').textContent =
+                    data.user.first_name.charAt(0).toUpperCase() + data.user.last_name.charAt(0).toUpperCase();
+                document.getElementById('modalCustomerName').textContent =
+                    `${data.user.first_name} ${data.user.last_name}`;
+                document.getElementById('modalCustomerEmail').textContent = data.user.email;
+                document.getElementById('modalCustomerPhone').textContent = data.user.phone || 'Not provided';
+                document.getElementById('modalCustomerSince').textContent =
+                    new Date(data.user.date_joined).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+
+                // Vehicle info
+                document.getElementById('modalCarImage').src = data.car.car_img;
+                document.getElementById('modalCarMakeModel').textContent = `${data.car.make} ${data.car.model}`;
+                document.getElementById('modalCarDetails').textContent = `${data.car.year} • ${data.car.color}`;
+                document.getElementById('modalCarTransmission').textContent = data.car.transmission;
+                document.getElementById('modalCarFuel').textContent = data.car.fuel;
+                document.getElementById('modalCarPrice').textContent = `₹${data.car.price}`;
+
+                // Payment info
+                const paymentStatusElement = document.getElementById('modalPaymentStatus');
+                paymentStatusElement.textContent = data.is_paid ? 'Paid' : 'Pending';
+                paymentStatusElement.className = 'font-medium ' +
+                    (data.is_paid ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400');
+
+                document.getElementById('modalPaymentId').textContent = data.payment?.razor_payment_id || 'N/A';
+                document.getElementById('modalPaymentDate').textContent = data.payment ?
+                    new Date(data.payment.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
+                document.getElementById('modalAmountPaid').textContent = data.payment?.amount_paid || '₹0';
+                document.getElementById('modalPaymentMethod').textContent = 'Razorpay';
+                document.getElementById('modalRazorpayOrderId').textContent = data.razorpay_order_id || 'N/A';
+
+                // Show modal
+                document.getElementById('bookingModal').classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error fetching booking details:', error);
+                alert('Error loading booking details');
+            });
+    }
+
+    function closeModal() {
+        document.getElementById('bookingModal').classList.add('hidden');
+    }
+
+    // Cancel booking functions
+    let currentBookingIdToCancel = null;
+
+    function confirmCancelBooking(bookingId) {
+        currentBookingIdToCancel = bookingId;
+        document.getElementById('cancelBookingModal').classList.remove('hidden');
+    }
+
+    function closeCancelModal() {
+        document.getElementById('cancelBookingModal').classList.add('hidden');
+        currentBookingIdToCancel = null;
+    }
+
+    document.getElementById('confirmCancelBtn').addEventListener('click', function () {
+        if (currentBookingIdToCancel) {
+            fetch(`/admin/cancel-booking/${currentBookingIdToCancel}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Booking cancelled successfully');
+                        window.location.reload();
+                    } else {
+                        alert('Error cancelling booking: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error cancelling booking:', error);
+                    alert('Error cancelling booking');
+                })
+                .finally(() => {
+                    closeCancelModal();
+                });
+        }
+    });
+
+    // Close modals when clicking outside
+    document.getElementById('bookingModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    document.getElementById('cancelBookingModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+            closeCancelModal();
+        }
+    });
+</script>
+{% endblock %}

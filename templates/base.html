@@ -1,0 +1,43 @@
+{% load static tailwind_tags %}
+{% load static %}
+
+
+<!doctype html>
+
+<html lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+   <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+    <title>rent a car</title>
+    {% tailwind_css %}
+
+</head>
+    
+ <style>
+  html {
+  scroll-padding-top: 5rem;      /* same as navbar height */
+}
+ </style>
+    <title>{%block title %} {%endblock%}</title>
+  </head>
+  <body  class="flex flex-col min-h-screen font-sans">
+    
+    
+    {%include 'include/navbar.html'%}
+    
+  <main id="content" class="flex-1 ">
+      {% block content %}{% endblock %}
+  </main>
+    {%include 'include/footer.html'%}
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script> 
+  </body>
+  </html>

@@ -1,0 +1,107 @@
+{% load static tailwind_tags %}
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <title>rent a car</title>
+    {% tailwind_css %}
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body class="flex flex-col min-h-screen font-sans">
+    <!-- Wrapper -->
+    <div class="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+      <!-- Mobile Navbar -->
+      <header class="w-full bg-white dark:bg-gray-800 shadow-lg p-4 flex justify-between items-center md:hidden sticky top-0 z-50">
+        <div class="flex items-center">
+          <svg class="w-8 h-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+          <h2 class="text-xl font-bold text-blue-600 ml-2">LuxeRide Admin</h2>
+        </div>
+        <button id="toggleSidebar" class="text-gray-600 dark:text-white focus:outline-none transform hover:scale-110 transition-transform">
+          <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </header>
+
+      <!-- Sidebar - Made sticky here -->
+      <aside id="sidebar" class="w-64 bg-white dark:bg-gray-800 shadow-xl fixed md:sticky md:top-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-40 h-screen md:h-[100vh] overflow-y-auto">
+        <div class="h-full px-4 py-8 flex flex-col">
+          <div class="flex items-center justify-center mb-10">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-blue-700 flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+            </div>
+            <h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 ml-3">LuxeRide</h2>
+          </div>
+         
+          <nav class="space-y-2 flex-1">
+            <a href="{% url 'admin_dashboard' %}" class="flex items-center px-4 py-3 rounded-xl text-gray-700 dark:text-white bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 font-medium transition-all hover:shadow-md">
+              <svg class="w-5 h-5 mr-3 text-blue-600 dark:text-blue-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              Dashboard
+            </a>
+            <a href="{% url 'admin_cars' %}" class="flex items-center px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-all hover:shadow-md">
+              <svg class="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+              Cars
+            </a>
+            <a href="{% url 'book_payment'  %}" class="flex items-center px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-all hover:shadow-md">
+              <svg class="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Booking 
+            </a>
+            <a href="{% url 'admin_user' %}" class="flex items-center px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-all hover:shadow-md">
+              <svg class="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              Users
+            </a>
+            <a href="{% url 'logout' %}" class="flex items-center px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-gray-700 transition-all hover:shadow-md mt-auto">
+              <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Logout
+            </a>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Overlay for mobile -->
+      <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden transition-opacity duration-300"></div>
+
+      <!-- Main Content -->
+      <main class="flex-1 p-6 md:p-10 mt-16 md:mt-0 overflow-y-auto">
+        {% block content %}
+        {% endblock %}
+      </main>
+    </div>
+
+    <!-- JavaScript for sidebar toggle -->
+    <script>
+      const toggleBtn = document.getElementById('toggleSidebar');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      toggleBtn?.addEventListener('click', () => {
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+      });
+
+      overlay?.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      });
+    </script>
+  </body>
+</html>

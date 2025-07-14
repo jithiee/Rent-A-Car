@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% comment %} {% load fontawesome %} {% endcomment %}
+
+{% block content %}
+
+
+
+<!-- Tailwind CSS version of Premium Car Listing -->
+<div class="max-w-7xl mx-auto px-4 lg:px-8 py-10 font-[Montserrat] text-gray-800">
+  <!-- Search & Filter -->
+  <div class="bg-white rounded-xl shadow-xl p-8 mb-10">
+    <h2 class="relative font-[Playfair_Display] text-3xl font-bold text-gray-900 mb-8 after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-16 after:h-1 after:bg-yellow-500"></h2>
+    <!-- Search bar -->
+    <div class="relative mb-6">
+      <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+      <input type="text" placeholder="Search by make, model or features..." class="w-full pl-12 pr-4 py-4 rounded-lg border border-gray-200 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-4">
+      <!-- Car Type -->
+      <div class="flex-1 min-w-[200px]">
+        <label class="block font-semibold mb-2 text-gray-700">Car Type</label>
+        <select class="block w-full px-4 py-3 rounded-md border border-gray-200 bg-gray-100 appearance-none focus:outline-none focus:ring-2 focus:ring-yellow-400">
+          <option value="">All Types</option>
+          <option value="suv">SUV</option>
+          <option value="sedan">Sedan</option>
+          <option value="sports">Sports</option>
+          <option value="luxury">Luxury</option>
+        </select>
+      </div>
+      <!-- Transmission -->
+      <div class="flex-1 min-w-[200px]">
+        <label class="block font-semibold mb-2 text-gray-700">Transmission</label>
+        <select class="block w-full px-4 py-3 rounded-md border border-gray-200 bg-gray-100 appearance-none focus:outline-none focus:ring-2 focus:ring-yellow-400">
+          <option value="">All Transmissions</option>
+          <option value="automatic">Automatic</option>
+          <option value="manual">Manual</option>
+        </select>
+      </div>
+      <!-- Fuel Type -->
+      <div class="flex-1 min-w-[200px]">
+        <label class="block font-semibold mb-2 text-gray-700">Fuel Type</label>
+        <select class="block w-full px-4 py-3 rounded-md border border-gray-200 bg-gray-100 appearance-none focus:outline-none focus:ring-2 focus:ring-yellow-400">
+          <option value="">All Fuel Types</option>
+          <option value="petrol">Petrol</option>
+          <option value="diesel">Diesel</option>
+          <option value="electric">Electric</option>
+          <option value="hybrid">Hybrid</option>
+        </select>
+      </div>
+      <!-- Price -->
+      <div class="flex-1 min-w-[200px]">
+        <label class="block font-semibold mb-2 text-gray-700">Price Range</label>
+        <select class="block w-full px-4 py-3 rounded-md border border-gray-200 bg-gray-100 appearance-none focus:outline-none focus:ring-2 focus:ring-yellow-400">
+          <option value="">All Prices</option>
+          <option value="0-100">Under $100/day</option>
+          <option value="100-200">$100 - $200/day</option>
+          <option value="200-300">$200 - $300/day</option>
+          <option value="300+">$300+/day</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cars grid -->
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    {% for car in Vehicles %}
+    <div class="group bg-white rounded-xl overflow-hidden shadow-lg hover:-translate-y-1 transition">
+      <!-- Image -->
+      <div class="relative h-56 overflow-hidden">
+        <img src="{{ car.car_img.url }}" alt="{{ car.make }} {{ car.model }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        {% if car.id in booked_cars %}
+          <div class="absolute top-3 right-3 text-xs font-semibold px-3 py-1 rounded-full bg-red-600 text-white">Booked</div>
+        {% else %}
+          <div class="absolute top-3 right-3 text-xs font-semibold px-3 py-1 rounded-full bg-green-600 text-white">Available</div>
+        {% endif %}
+      </div>
+      <!-- Content -->
+      <div class="p-6">
+        <h3 class="font-[Playfair_Display] text-2xl font-bold text-gray-900 mb-1">{{ car.make }}</h3>
+        <p class="text-gray-600 mb-4">{{ car.model }} • {{ car.year }}</p>
+        <div class="text-xl font-extrabold text-gray-900 mb-6">₹{{ car.price }} <span class="text-sm font-normal text-gray-500">/ day</span></div>
+        <div class="flex gap-4">
+          {% if car.id in booked_cars   %}
+          <button data-return-date="{{ booked_cars|get_item:car.id }}" data-car-name="{{ car.make }} {{ car.model }}" class="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold open-modal-btn hover:bg-yellow-500 transition">Currently <span class="text-red-400">Booked</span></button>
+          {% else %}
+          <a href="{% url 'booking' car.id %}" class="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-yellow-500 transition text-center">Book Now</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="bookingModal" class="fixed font-[Montserrat] inset-0 z-50 hidden">
+  <div id="modalOverlay" class="absolute inset-0 bg-opacity-30 backdrop-blur-sm"></div>
+
+  <div class="flex items-center justify-center min-h-screen">
+    <div id="modalContent" class="relative bg-white rounded-lg shadow-xl w-[90%] max-w-md p-8 z-10">
+      <button id="closeModal" class="absolute top-2 right-2 text-2xl font-bold leading-none text-gray-500 hover:text-black">&times;</button>
+      <h3 id="carTitle" class="text-xl font-bold mb-4"></h3>
+      <p class="mb-6">Return Date: <span id="returnDateDisplay" class="font-semibold text-red-600"></span></p>
+      <p class="text-center text-lg font-mono">Time Remaining: <span id="countdown" class="text-red-600"></span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Modal logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('bookingModal')
+    const closeModal = document.getElementById('closeModal')
+    const modalOverlay = document.getElementById('modalOverlay')
+    const modalContent = document.getElementById('modalContent')
+    const carTitle = document.getElementById('carTitle')
+    const returnDateDisplay = document.getElementById('returnDateDisplay')
+    const countdownEl = document.getElementById('countdown')
+
+    document.querySelectorAll('.open-modal-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const returnDateStr = btn.getAttribute('data-return-date')
+        const carName = btn.getAttribute('data-car-name')
+        carTitle.textContent = carName
+        returnDateDisplay.textContent = returnDateStr
+        modal.classList.remove('hidden')
+        startCountdown(returnDateStr)
+      })
+    })
+
+    function closeModalFunction() {
+      modal.classList.add('hidden')
+      clearInterval(window._countdownInterval)
+    }
+
+    closeModal.addEventListener('click', closeModalFunction)
+    modalOverlay.addEventListener('click', closeModalFunction)
+
+    function startCountdown(dateStr) {
+      function update() {
+        const end = new Date(dateStr)
+        const now = new Date()
+        const diff = end - now
+        if (diff <= 0) {
+          countdownEl.textContent = '0d 0h 0m 0s'
+          return
+        }
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
+        const minutes = Math.floor((diff / (1000 * 60)) % 60)
+        const seconds = Math.floor((diff / 1000) % 60)
+        countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`
+      }
+      update()
+      clearInterval(window._countdownInterval)
+      window._countdownInterval = setInterval(update, 1000)
+    }
+  })
+</script>
+{% endblock %}

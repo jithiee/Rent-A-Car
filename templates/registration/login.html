@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Premium Login | Luxury Car Rentals{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════ LOGIN SECTION ══════════════════════════════ -->
+<section class="relative min-h-screen flex items-center justify-center py-20 px-6 bg-center bg-cover" style="background-image: url('{% static 'images/2021.jpeg' %}')">
+
+    <!-- overlay -->
+    <div class="absolute inset-0 bg-black/70 -z-10"></div>
+
+    <div class="max-w-6xl w-full grid lg:grid-cols-2 gap-12 items-center relative z-10">
+        <!-- ────────────── Card ────────────── -->
+        <div class="bg-white/95 backdrop-blur rounded-xl shadow-2xl p-8 sm:p-10">
+            <h2 class="font-playfair text-2xl md:text-3xl font-bold text-primary mb-2">Welcome Back</h2>
+            <p class="text-gray-600 text-sm mb-8">Sign in to access your premium account</p>
+
+            {% include 'include/alert.html' %}
+
+            <form action="{% url 'login' %}" method="POST" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- email -->
+                <div>
+                    <label for="id_email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input type="email" id="id_email" name="email" required placeholder="Enter your email"
+                           class="w-full mt-1 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                </div>
+
+                <!-- password -->
+                <div>
+                    <label for="id_password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="id_password" name="password" required placeholder="Enter your password"
+                           class="w-full mt-1 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                    <p class="text-right mt-2 text-sm">
+                        <a href="{% url 'foregotpassword' %}" class="text-amber-600 hover:underline">Forgot password?</a>
+                    </p>
+                </div>
+
+                <!-- submit -->
+               
+                <button type="submit"
+                    class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-4 rounded-md shadow transition duration-300">
+                 Sign In
+            </button>
+                <p class="text-center text-sm text-gray-600 mt-6">
+                    Don't have an account?
+                    <a href="{% url 'register' %}" class="text-amber-600 font-semibold hover:underline">Create one</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- ────────────── Marketing copy ────────────── -->
+        <div class="text-white lg:pr-8">
+            <span class="inline-block uppercase tracking-widest text-secondary text-xs mb-4">Exclusive Access</span>
+            <h1 class="font-playfair text-4xl lg:text-5xl font-bold leading-tight mb-6">Your Luxury Experience Awaits</h1>
+            <p class="opacity-90 mb-10 max-w-md">Sign in to manage your reservations, access member‑exclusive offers, and enjoy our premium concierge services.</p>
+
+            <ul class="space-y-4">
+                <li class="flex items-center gap-3 text-sm"><i class="fas fa-star text-secondary"></i> Priority booking for high‑demand vehicles</li>
+                <li class="flex items-center gap-3 text-sm"><i class="fas fa-percentage text-secondary"></i> Exclusive member discounts</li>
+                <li class="flex items-center gap-3 text-sm"><i class="fas fa-concierge-bell text-secondary"></i> 24/7 VIP customer support</li>
+                <li class="flex items-center gap-3 text-sm"><i class="fas fa-history text-secondary"></i> Quick reservation history access</li>
+            </ul>
+        </div>
+    </div>
+</section>
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+{% endblock %}

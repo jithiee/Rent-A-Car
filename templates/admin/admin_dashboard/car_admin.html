@@ -1,0 +1,326 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block content %}
+<div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Car Fleet Management</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-2">Manage your rental car inventory and availability</p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3">
+        <button onclick="openModal()"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+            <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Add New Car
+        </button>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-blue-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 uppercase">Total Cars</h2>
+                <p class="text-3xl font-bold text-gray-800 dark:text-white mt-2">{{ total_cars }}</p>
+            </div>
+            <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-green-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 uppercase">Available</h2>
+                <p class="text-3xl font-bold text-gray-800 dark:text-white mt-2">{{ available_cars }}</p>
+            </div>
+            <div class="p-3 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-yellow-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 uppercase">Rented</h2>
+                <p class="text-3xl font-bold text-gray-800 dark:text-white mt-2">{{ rented_cars }}</p>
+            </div>
+            <div class="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-red-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-medium text-gray-500 dark:text-gray-300 uppercase">Maintenance</h2>
+                <p class="text-3xl font-bold text-gray-800 dark:text-white mt-2">{{ maintenance_cars }}</p>
+            </div>
+            <div class="p-3 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cars Table -->
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-6">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Car
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Type
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        Price/Day</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Fuel
+                    </th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                {% for car in vehicles %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="h-16 w-16 flex-shrink-0">
+                                <img class="h-16 w-16 object-cover rounded-lg" src="{{ car.car_img.url }}"
+                                    alt="{{ car.make }}">
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ car.make }} {{car.model }}</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ car.year }} • {{ car.color }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ car.transmission }}</td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-800 dark:text-white">₹{{ car.price }}</td>
+                    <td class="px-6 py-4">
+                        {% if car.id in rented_ids %}
+                        <span
+                            class="px-2 inline-flex text-xs font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">
+                            Rented
+                        </span>
+                        {% elif car.is_status %}
+                        <span
+                            class="px-2 inline-flex text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
+                            Maintenance
+                        </span>
+                        {% else %}
+                        <span
+                            class="px-2 inline-flex text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                            Available
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ car.fuel }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end space-x-2">
+                            <a href="#"
+                                class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">View</a>
+                            <a href="#"
+                                class="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300">Edit</a>
+                            <a href="#"
+                                class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-gray-500 dark:text-gray-400">No vehicles available.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Car Modal -->
+<div id="addCarModal"
+    class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
+    <div id="modalContent"
+        class="bg-white dark:bg-gray-800 transform scale-95 opacity-0 transition-all duration-300 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white">Add New Vehicle</h3>
+                <button onclick="closeModal()"
+                    class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" action="{% url 'car_fleet_management' %}">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Make and Model -->
+                    <div>
+                        <label for="make"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Make</label>
+                        <input type="text" id="make" name="make" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label for="model"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Model</label>
+                        <input type="text" id="model" name="model" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+
+                    <!-- Year and Color -->
+                    <div>
+                        <label for="year"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Year</label>
+                        <input type="number" id="year" name="year" min="1900" max="{% now 'Y' %}" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label for="color"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Color</label>
+                        <input type="text" id="color" name="color" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+
+                    <!-- Transmission and Fuel -->
+                    <div>
+                        <label for="transmission"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transmission</label>
+                        <select id="transmission" name="transmission" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">Select Transmission</option>
+                            <option value="Automatic">Automatic</option>
+                            <option value="Manual">Manual</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="fuel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fuel
+                            Type</label>
+                        <select id="fuel" name="fuel" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">Select Fuel Type</option>
+                            <option value="Diesel">Diesel</option>
+                            <option value="Petrol">Petrol</option>
+                            <option value="Electric">Electric</option>
+                        </select>
+                    </div>
+
+                    <!-- Price and Availability -->
+                    <div>
+                        <label for="price"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Price/Day
+                            (₹)</label>
+                        <input type="number" id="price" name="price" min="0" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div class="flex items-center">
+                        <div class="mt-6">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="is_available" checked
+                                    class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700">
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Available for rent</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div class="md:col-span-2">
+                        <label for="car_img" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Car
+                            Image</label>
+                        <input type="file" id="car_img" name="car_img" accept="image/*" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+
+                    <!-- Description -->
+                    <div class="md:col-span-2">
+                        <label for="description"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                        <textarea id="description" name="description" rows="3"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal()"
+                        class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Add Vehicle
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openModal() {
+        document.getElementById('addCarModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('addCarModal').classList.add('hidden');
+    }
+
+    // Close modal when clicking outside of it
+    document.getElementById('addCarModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+    const modal = document.getElementById('addCarModal');
+    const modalContent = document.getElementById('modalContent');
+
+    function openModal() {
+        modal.classList.remove('pointer-events-none', 'opacity-0');
+        modal.classList.add('opacity-100');
+
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function closeModal() {
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+
+        setTimeout(() => {
+            modal.classList.add('pointer-events-none', 'opacity-0');
+            modal.classList.remove('opacity-100');
+        }, 200);
+    }
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900 py-10 px-4">
+  <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-10">
+
+    <!-- Flash Messages -->
+    {% if messages %}
+      <div class="mb-6">
+        {% for message in messages %}
+          <div class="text-sm text-white px-4 py-2 rounded 
+            {% if message.tags == 'success' %}bg-green-500
+            {% elif message.tags == 'error' %}bg-red-500
+            {% else %}bg-blue-500{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Page Title -->
+    <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-8">Update Profile</h2>
+
+    <!-- Form -->
+    <form method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {% csrf_token %}
+
+      <!-- Left Column -->
+      <div class="space-y-5">
+        <div>
+          <label for="firstName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
+          <input id="firstName" name="firstName" type="text" value="{{ user.first_name }}"
+            class="w-full mt-1 p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label for="lastName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</label>
+          <input id="lastName" name="lastName" type="text" value="{{ user.last_name }}"
+            class="w-full mt-1 p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
+          <input id="phone" name="phone" type="text" value="{{ user.phone_number }}"
+            class="w-full mt-1 p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label for="address" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
+          <input id="address" name="address" type="text" value="{{ user.address }}"
+            class="w-full mt-1 p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label for="city" class="block text-sm font-medium text-gray-700 dark:text-gray-300">City</label>
+          <input id="city" name="city" type="text" value="{{ user.city }}"
+            class="w-full mt-1 p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label for="country" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Country</label>
+          <select id="country" name="country"
+            class="w-full mt-1 p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500">
+            {% for country in countries %}
+              <option value="{{ country }}" {% if user.country == country %}selected{% endif %}>{{ country }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-6">
+        <!-- Profile Picture Upload -->
+        <div class="flex flex-col items-center space-y-4">
+          {% if user.profile_picture %}
+            <img id="profilePreview" src="{{ user.profile_picture.url }}" alt="Profile Picture"
+                 class="w-32 h-32 rounded-full object-cover border-2 border-gray-300 shadow" />
+          {% else %}
+            <img id="profilePreview" src="{% static 'images/default_profile.png' %}" alt="Default Profile"
+                 class="w-32 h-32 rounded-full object-cover border-2 border-gray-300 shadow" />
+          {% endif %}
+
+          <input type="file" name="fileUpload" id="fileUpload" onchange="previewProfile(event)"
+            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-blue-600 file:text-white file:rounded-lg hover:file:bg-blue-700" />
+        </div>
+
+        <!-- Save Profile Button -->
+        <button type="submit" name="saveProfileBtn"
+          class="savebtn  w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition">
+          Save Profile
+        </button>
+
+        <!-- Password Change Section -->
+        <div class="border-t pt-6">
+          <h3 class="text-lg font-semibold text-gray-700 dark:text-white mb-4">Change Password</h3>
+
+          <div class="space-y-4">
+            <input type="password" name="currentPassword" placeholder="Current Password"
+              class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500" />
+            <input type="password" name="newPassword" placeholder="New Password"
+              class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500" />
+            <input type="password" name="confirmPassword" placeholder="Confirm Password"
+              class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500" />
+          </div>
+
+          <button type="submit" name="changePasswordBtn"
+            class="mt-4 w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition">
+            Change Password
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Profile Image Preview Script -->
+<script>
+  function previewProfile(event) {
+    const preview = document.getElementById('profilePreview');
+    preview.src = URL.createObjectURL(event.target.files[0]);
+  }
+
+document.addEventListener("DOMContentLoaded" , function(){
+     const successMsg = document.querySelector(".bg-green-500");
+     if(successMsg){
+        setTimeout(()=>{
+            window.location.href = "{% url 'userprofile' %}";
+        }, 2000)
+     }
+})
+ 
+
+</script>
+{% endblock %}
