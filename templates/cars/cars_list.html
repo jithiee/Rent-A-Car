@@ -95,23 +95,42 @@
     {% endfor %}
   </div>
 </div>
+<!-- Premium Booking Modal -->
+<div id="bookingModal" class="fixed inset-0 z-50 hidden font-[Montserrat]">
+  <!-- Overlay with glass effect -->
+  <div id="modalOverlay" class="absolute inset-0 bg-black/40 backdrop-blur-md transition-opacity duration-300"></div>
 
-<!-- Modal -->
-<div id="bookingModal" class="fixed font-[Montserrat] inset-0 z-50 hidden">
-  <div id="modalOverlay" class="absolute inset-0 bg-opacity-30 backdrop-blur-sm"></div>
+  <!-- Centered Modal -->
+  <div class="flex items-center justify-center min-h-screen px-4">
+    <div id="modalContent" class="relative bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl w-full max-w-lg p-8 transition-all duration-300 z-10 border border-gray-200">
+      
+      <!-- Close Button -->
+      <button id="closeModal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-900 transition text-2xl font-bold">
+        &times;
+      </button>
 
-  <div class="flex items-center justify-center min-h-screen">
-    <div id="modalContent" class="relative bg-white rounded-lg shadow-xl w-[90%] max-w-md p-8 z-10">
-      <button id="closeModal" class="absolute top-2 right-2 text-2xl font-bold leading-none text-gray-500 hover:text-black">&times;</button>
-      <h3 id="carTitle" class="text-xl font-bold mb-4"></h3>
-      <p class="mb-6">Return Date: <span id="returnDateDisplay" class="font-semibold text-red-600"></span></p>
-      <p class="text-center text-lg font-mono">Time Remaining: <span id="countdown" class="text-red-600"></span></p>
+      <!-- Header Gradient -->
+      <div class="bg-gradient-to-r from-blue-700  to-neutral-800 rounded-xl text-white px-6 py-4 mb-6 shadow-sm">
+        <h3 id="carTitle" class="text-2xl font-bold tracking-tight">Car Name</h3>
+        <p class="text-sm mt-1">Return Date: <span id="returnDateDisplay" class="font-semibold text-white/90"></span></p>
+      </div>
+
+      <!-- Countdown Section -->
+      <div class="text-center">
+        <p class="text-lg text-gray-800 mb-2 font-medium">⏳ Time Remaining</p>
+        <p id="countdown" class="text-2xl font-bold text-red-600 tracking-wide font-mono">Loading...</p>
+      </div>
+
+      <!-- Optional Footer -->
+      <div class="mt-8 border-t pt-4 text-xs text-gray-500 text-center">
+        Secure booking with 24/7 support
+      </div>
     </div>
   </div>
 </div>
 
+<!-- Script (same logic) -->
 <script>
-  // Modal logic
   document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('bookingModal')
     const closeModal = document.getElementById('closeModal')
@@ -161,4 +180,5 @@
     }
   })
 </script>
+
 {% endblock %}
