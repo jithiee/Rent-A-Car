@@ -14,7 +14,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ 'localhost', '127.0.0.1']
 
 
 
@@ -39,6 +39,9 @@ INSTALLED_APPS = [
 TAILWIND_APP_NAME = 'theme'
 INTERNAL_IPS =config('INTERNAL_IPS')
 NPM_BIN_PATH =  config(r'NPM_BIN_PATH') 
+
+
+
 MIDDLEWARE = [
     
     'django.middleware.security.SecurityMiddleware',
@@ -49,9 +52,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "django_browser_reload.middleware.BrowserReloadMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',  
 ]
 
 ROOT_URLCONF = 'RentCar.urls'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 TEMPLATES = [
     {
@@ -126,6 +131,7 @@ USE_TZ = True
 
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
