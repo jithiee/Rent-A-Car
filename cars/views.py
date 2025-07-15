@@ -14,7 +14,7 @@ import uuid
 import razorpay
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from xhtml2pdf import pisa
+# from xhtml2pdf import pisa
 from io import BytesIO
 
 
@@ -150,7 +150,7 @@ def success(request):
         )
         booking.is_paid = True
         booking.save()
-        send_invoice_pdf(booking, payment["amount"] / 100)
+        # send_invoice_pdf(booking, payment["amount"] / 100)
         
     except razorpay.errors.BadRequestError as e:
         return HttpResponse(f"Razorpay error : {e}")
@@ -158,22 +158,22 @@ def success(request):
     return render(request, 'cars/success.html', {"book": booking})
 
 
-def send_invoice_pdf(booking, amount):
-    html = render_to_string('cars/invoice.html', {'booking': booking, 'amount': amount})
-    result = BytesIO()
-    pisa_status = pisa.CreatePDF(html, dest=result)
+# def send_invoice_pdf(booking, amount):
+#     html = render_to_string('cars/invoice.html', {'booking': booking, 'amount': amount})
+#     result = BytesIO()
+#     pisa_status = pisa.CreatePDF(html, dest=result)
 
-    if pisa_status.err:
-        return None
+#     if pisa_status.err:
+#         return None
 
-    pdf = result.getvalue()
-    email = EmailMessage(
-        'Your Booking Invoice - DriveEase Rentals',
-        'Please find your booking invoice attached.',
-        settings.DEFAULT_FROM_EMAIL,
-        [booking.user.email],
-    )
-    email.attach(f'Invoice_{booking.unique_id}.pdf', pdf, 'application/pdf')
-    email.send()
+#     pdf = result.getvalue()
+#     email = EmailMessage(
+#         'Your Booking Invoice - DriveEase Rentals',
+#         'Please find your booking invoice attached.',
+#         settings.DEFAULT_FROM_EMAIL,
+#         [booking.user.email],
+#     )
+#     email.attach(f'Invoice_{booking.unique_id}.pdf', pdf, 'application/pdf')
+#     email.send()
     
     
