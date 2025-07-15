@@ -92,8 +92,11 @@ AUTHENTICATION_BACKENDS = [
 
     # Use Render's PostgreSQL DB
 DATABASES = {
-        'default': dj_database_url.config(default=config('DATABASE_URL'))
-    }
+    'default': dj_database_url.parse(
+        "postgresql://rent_a_car_app_user:dZnSOAVra7W2UAsELTXl4AefcTMcuRB2@dpg-d1rad0euk2gs739o26q0-a/rent_a_car_app"
+    )
+}
+
 
     # Use local DB
     # DATABASES = {
