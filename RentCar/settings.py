@@ -89,23 +89,23 @@ AUTHENTICATION_BACKENDS = [
 
 
 
-if os.environ.get('RENDER', None):
+
     # Use Render's PostgreSQL DB
-    DATABASES = {
+DATABASES = {
         'default': dj_database_url.config(default=config('DATABASE_URL'))
     }
-else:
+
     # Use local DB
-    DATABASES = {
-        'default': {
-            'ENGINE': config('ENGINE'),
-            'NAME': config('NAME'),
-            'USER': config('USER'),
-            'PASSWORD': config('PASSWORD'),
-            'HOST': config('HOST'),
-            'PORT': config('PORT'),
-        }
-    }
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': config('ENGINE'),
+    #         'NAME': config('NAME'),
+    #         'USER': config('USER'),
+    #         'PASSWORD': config('PASSWORD'),
+    #         'HOST': config('HOST'),
+    #         'PORT': config('PORT'),
+    #     }
+    # }
 
 
 
