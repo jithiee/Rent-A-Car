@@ -2,6 +2,8 @@
 from pathlib import Path
 from decouple import config
 
+import dj_database_url
+
 import os
 
 
@@ -86,19 +88,24 @@ AUTHENTICATION_BACKENDS = [
 
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': config('ENGINE'),
-        'NAME': config('NAME'),
-        'USER': config('USER'),
-        'PASSWORD':config('PASSWORD'),
-        'HOST':config('HOST'),
-        'PORT':config('PORT'),
-       
-       
-    }
-}
 
+if os.environ.get('RENDER', None):
+    # Use Render's PostgreSQL DB
+    DATABASES = {
+        'default': dj_database_url.config(default=config('DATABASE_URL'))
+    }
+else:
+    # Use local DB
+    DATABASES = {
+        'default': {
+            'ENGINE': config('ENGINE'),
+            'NAME': config('NAME'),
+            'USER': config('USER'),
+            'PASSWORD': config('PASSWORD'),
+            'HOST': config('HOST'),
+            'PORT': config('PORT'),
+        }
+    }
 
 
 
