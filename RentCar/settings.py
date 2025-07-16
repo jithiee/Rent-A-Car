@@ -110,6 +110,42 @@ DATABASES = {
     #     }
     # }
 
+# DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': 'rent_one',
+#             'USER': 'postgres',
+#             'PASSWORD': '1598',
+#             'HOST': 'localhost',
+#             'PORT': 5432,
+#         }
+#     }
+
+
+# import dj_database_url
+# from decouple import config
+# import os
+
+# RENDER = os.environ.get('RENDER', False)
+
+# if RENDER:
+#     DATABASES = {
+#         'default': dj_database_url.config(conn_max_age=600)
+#     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': config('NAME', default='rentcar'),
+#             'USER': config('USER', default='postgres'),
+#             'PASSWORD': config('PASSWORD', default='yourpassword'),
+#             'HOST': config('HOST', default='localhost'),
+#             'PORT': config('PORT', default='5432'),
+#         }
+#     }
+
+
+
 
 
 
