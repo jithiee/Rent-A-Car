@@ -23,7 +23,7 @@ class MyAccountManager(BaseUserManager):
         
         user.set_password(password) #  set_password seting the password inbuild func
 
-        if email == "jo266662@gmail.com":
+        if email == "noopwala@gmail.com":
                 user.is_admin = True
                 user.is_staff = True
                 user.is_active =True
@@ -47,6 +47,7 @@ class MyAccountManager(BaseUserManager):
           user.is_staff = True
           user.is_active =True
           user.is_superadmin = True
+
           user.save(using=self._db ) # _db save the database or db connection
           return user
           
