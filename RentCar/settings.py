@@ -91,35 +91,25 @@ RENDER = os.environ.get('RENDER', '') == 'TRUE'
 
 
     # Use Render's PostgreSQL DB
-DATABASES = {
-    'default': dj_database_url.parse(
-        "postgresql://rent_a_car_app_user:dZnSOAVra7W2UAsELTXl4AefcTMcuRB2@dpg-d1rad0euk2gs739o26q0-a/rent_a_car_app"
-    )
-}
+# DATABASES = {
+#     'default': dj_database_url.parse(
+#         "postgresql://rent_a_car_app_user:dZnSOAVra7W2UAsELTXl4AefcTMcuRB2@dpg-d1rad0euk2gs739o26q0-a/rent_a_car_app"
+#     )
+# }
 
 
     # Use local DB
-    # DATABASES = {
-    #     'default': {
-    #         'ENGINE': config('ENGINE'),
-    #         'NAME': config('NAME'),
-    #         'USER': config('USER'),
-    #         'PASSWORD': config('PASSWORD'),
-    #         'HOST': config('HOST'),
-    #      
-    #     }
-    # }
+DATABASES = {
+        'default': {
+            'ENGINE': config('ENGINE'),
+            'NAME': config('NAME'),
+            'USER': config('USER'),
+            'PASSWORD': config('PASSWORD'),
+            'HOST': config('HOST'),
+         
+        }
+    }
 
-# DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.postgresql',
-#             'NAME': 'rent_one',
-#             'USER': 'postgres',
-#             'PASSWORD': '1598',
-#             'HOST': 'localhost',
-#             'PORT': 5432,
-#         }
-#     }
 
 
 # import dj_database_url
